@@ -1,5 +1,5 @@
 {
-  "name": "slides-syncer"
+  "name": "slides-sync",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "express": "3.0.0rc4",
-    "socket.io": "*",
+    "socket.io": "*"
   }
 }
