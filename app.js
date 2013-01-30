@@ -6,7 +6,7 @@ var express = require('express')
   , path = require('path');
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 8000);
+  app.set('port', process.env.PORT || 9000);
   // app.set('views', __dirname + '/views');
   // app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -33,8 +33,8 @@ server.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
-  socket.emit('newclient', { msg : 'welcome' });
-  socket.on('news', function (data) {
-    console.log(data);
+  // socket.emit('newclient', { msg : 'welcome' });
+  socket.on('keydown', function (data) {
+    socket.broadcast.emit("keydown", { keyCode: data.keyCode });
   });
 });

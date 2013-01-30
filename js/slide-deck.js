@@ -17,6 +17,9 @@ function SlideDeck(el) {
   this.slides = [];
   this.controller = null;
 
+  // initialize socket.
+  this.socket = io.connect();
+
   this.getCurrentSlideFromHash_();
 
   // Call this explicitly. Modernizr.load won't be done until after DOM load.
@@ -109,6 +112,9 @@ SlideDeck.prototype.onDomLoaded_ = function(e) {
       document.body.classList.add('popup');
     }
   }
+
+  // set up socket listeners.
+  this.setUpSocket();
 };
 
 /**
@@ -125,11 +131,11 @@ SlideDeck.prototype.addEventListeners_ = function() {
   //   'msTransition': 'MSTransitionEnd',
   //   'transition': 'transitionend'
   // };
-  // 
+  //
   // // Find the correct transitionEnd vendor prefix.
   // window.transEndEventName = transEndEventNames[
   //     Modernizr.prefixed('transition')];
-  // 
+  //
   // // When slides are done transitioning, kickoff loading iframes.
   // // Note: we're only looking at a single transition (on the slide). This
   // // doesn't include autobuilds the slides may have. Also, if the slide
@@ -160,12 +166,33 @@ SlideDeck.prototype.onPopState_ = function(e) {
 };
 
 /**
+ * @private
+ * @param {Event} e The pop event.
+ */
+SlideDeck.prototype.setUpSocket = function() {
+  this.socket.on("keydown", function (data){
+    // http://stackoverflow.com/a/8692335/654952
+    // console.log("keydown");
+    var e = jQuery.Event("keydown");
+    e.keyCode = e.which = data.keyCode;
+    e.fromServer = true;
+    $('body').trigger(e);
+  });
+};
+
+/**
  * @param {Event} e
  */
 SlideDeck.prototype.onBodyKeyDown_ = function(e) {
+  /*
   if (/^(input|textarea)$/i.test(e.target.nodeName) ||
       e.target.isContentEditable) {
     return;
+  }
+  */
+
+  if( !e.fromServer ){
+     this.socket.emit("keydown", {"keyCode" : e.keyCode});
   }
 
   // Forward keydowns to the main slides if we're the popup.
@@ -556,7 +583,7 @@ SlideDeck.prototype.updateSlides_ = function(opt_dontPush) {
   this.triggerSlideEvent('slideenter', curSlide);
 
 // window.setTimeout(this.disableSlideFrames_.bind(this, curSlide - 2), 301);
-// 
+//
 // this.enableSlideFrames_(curSlide - 1); // Previous slide.
 // this.enableSlideFrames_(curSlide + 1); // Current slide.
 // this.enableSlideFrames_(curSlide + 2); // Next slide.
