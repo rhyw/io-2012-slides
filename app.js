@@ -6,7 +6,7 @@ var express = require('express')
   , path = require('path');
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 8000);
+  app.set('port', process.env.PORT || 8080);
   // app.set('views', __dirname + '/views');
   // app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -27,7 +27,7 @@ app.get('/', function (req, res){
 });
 
 var server = http.createServer(app);
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), "0.0.0.0", function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
