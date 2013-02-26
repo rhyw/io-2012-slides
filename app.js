@@ -27,14 +27,15 @@ app.get('/', function (req, res){
 });
 
 var server = http.createServer(app);
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), '0.0.0.0', function(){
+// server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
-  socket.emit('newclient', { msg : 'welcome' });
-  socket.on('news', function (data) {
-    console.log(data);
+  // socket.emit('newclient', { msg : 'welcome' });
+  socket.on('keypress', function (data) {
+    socket.broadcast.emit("keypressed", {"keyCode" : data});
   });
 });
